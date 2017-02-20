@@ -32,12 +32,12 @@ write(io::IO, b::TAMQPBodyPayload) = write(io, b.data)
 
 function read(io::IO, ::Type{TAMQPShortStr})
     len = ntoh(read(io, TAMQPOctet))
-    TAMQPShortStr(len, read!(io, Array(UInt8, len)))
+    TAMQPShortStr(len, read!(io, Array{UInt8}(len)))
 end
 
 function read(io::IO, ::Type{TAMQPLongStr})
     len = ntoh(read(io, TAMQPLongUInt))
-    TAMQPLongStr(len, read!(io, Array(UInt8, len)))
+    TAMQPLongStr(len, read!(io, Array{UInt8}(len)))
 end
 
 write{T<:Union{TAMQPShortStr,TAMQPLongStr}}(io::IO, s::T) = write(io, hton(s.len), s.data)
@@ -57,7 +57,7 @@ write(io::IO, fv::TAMQPFieldValuePair) = write(io, fv.name, fv.val)
 function read(io::IO, ::Type{TAMQPFieldTable})
     len = ntoh(read(io, fieldtype(TAMQPFieldTable, :len)))
     @logmsg("read fieldtable length $(len)")
-    buff = read!(io, Array(UInt8, len))
+    buff = read!(io, Array{UInt8}(len))
     data = TAMQPFieldValuePair[]
     iob = IOBuffer(buff)
     while !eof(iob)
@@ -96,7 +96,7 @@ function read(io::IO, ::Type{TAMQPGenericFrame})
     @assert hdr in (1,2,3,8)
     props = read(io, fieldtype(TAMQPGenericFrame, :props))
     @logmsg("reading generic frame type:$hdr, channel:$(props.channel), payloadsize:$(props.payloadsize)")
-    payload = read!(io, TAMQPBodyPayload(Array(TAMQPOctet, props.payloadsize)))
+    payload = read!(io, TAMQPBodyPayload(Array{TAMQPOctet}(props.payloadsize)))
     fend = ntoh(read(io, fieldtype(TAMQPGenericFrame, :fend)))
     @assert fend == FrameEnd
     TAMQPGenericFrame(hdr, props, payload, fend)
@@ -1174,7 +1174,7 @@ end
 function on_channel_message_in(chan::MessageChannel, m::TAMQPContentHeaderFrame, ctx)
     msg = chan.partial_msgs[1]
     msg.properties = m.hdrpayload.proplist
-    msg.data = Array(UInt8, m.hdrpayload.bodysize)
+    msg.data = Array{UInt8}(m.hdrpayload.bodysize)
     msg.filled = 0
     nothing
 end

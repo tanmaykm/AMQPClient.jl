@@ -9,21 +9,21 @@ const FrameEnd = 0xCE
 const HeartBeat = UInt8[8, 0, 0, FrameEnd]
 
 
-#typealias TAMQPBit                  UInt8
-typealias TAMQPBool                 UInt8 # 0 = FALSE, else TRUE
-typealias TAMQPScale                UInt8 # number of decimal digits
-typealias TAMQPOctet                UInt8
-typealias TAMQPShortShortInt        UInt8
-typealias TAMQPShortShortUInt       UInt8
-typealias TAMQPShortInt             Int16
-typealias TAMQPShortUInt            UInt16
-typealias TAMQPLongInt              Int32
-typealias TAMQPLongUInt             UInt32
-typealias TAMQPLongLongInt          Int64
-typealias TAMQPLongLongUInt         UInt64
-typealias TAMQPFloat                Float32
-typealias TAMQPDouble               Float64
-typealias TAMQPTimeStamp            TAMQPLongLongUInt
+#const TAMQPBit                  = UInt8
+const TAMQPBool                 = UInt8 # 0 = FALSE, else TRUE
+const TAMQPScale                = UInt8 # number of decimal digits
+const TAMQPOctet                = UInt8
+const TAMQPShortShortInt        = UInt8
+const TAMQPShortShortUInt       = UInt8
+const TAMQPShortInt             = Int16
+const TAMQPShortUInt            = UInt16
+const TAMQPLongInt              = Int32
+const TAMQPLongUInt             = UInt32
+const TAMQPLongLongInt          = Int64
+const TAMQPLongLongUInt         = UInt64
+const TAMQPFloat                = Float32
+const TAMQPDouble               = Float64
+const TAMQPTimeStamp            = TAMQPLongLongUInt
 
 immutable TAMQPBit
     val::UInt8
@@ -52,16 +52,11 @@ immutable TAMQPLongStr
     data::Vector{UInt8}
 end
 
-typealias TAMQPFieldName TAMQPShortStr
+const TAMQPFieldName = TAMQPShortStr
 
 immutable TAMQPFieldValue{T}
     typ::Char  # as in FieldValueIndicatorMap
     fld::T
-end
-
-function TAMQPFieldValue(typ::Char, fld)
-    T = FieldValueIndicatorMap[typ]
-    TAMQPFieldValue{T}(typ, fld)
 end
 
 immutable TAMQPFieldValuePair
@@ -79,7 +74,7 @@ immutable TAMQPFieldTable
     data::Vector{TAMQPFieldValuePair}
 end
 
-typealias TAMQPField Union{TAMQPBit, TAMQPOctet, TAMQPShortInt, TAMQPShortUInt, TAMQPLongInt, TAMQPLongUInt, TAMQPLongLongInt, TAMQPLongLongUInt, TAMQPShortStr, TAMQPLongStr, TAMQPTimeStamp, TAMQPFieldTable}
+const TAMQPField = Union{TAMQPBit, TAMQPOctet, TAMQPShortInt, TAMQPShortUInt, TAMQPLongInt, TAMQPLongUInt, TAMQPLongLongInt, TAMQPLongLongUInt, TAMQPShortStr, TAMQPLongStr, TAMQPTimeStamp, TAMQPFieldTable}
 
 const FieldValueIndicatorMap = Dict{Char,Type}(
     't' => TAMQPBool,
@@ -105,12 +100,12 @@ const FieldValueIndicatorMap = Dict{Char,Type}(
 
 const FieldIndicatorMap = Dict{Type,Char}(v=>n for (n,v) in FieldValueIndicatorMap)
 
-typealias TAMQPChannel          TAMQPShortUInt
-typealias TAMQPPayloadSize      TAMQPLongUInt
-typealias TAMQPContentBodySize  TAMQPLongLongUInt
-typealias TAMQPClassId          UInt16
-typealias TAMQPMethodId         UInt16
-typealias TAMQPContentClass     TAMQPClassId
+const TAMQPChannel          = TAMQPShortUInt
+const TAMQPPayloadSize      = TAMQPLongUInt
+const TAMQPContentBodySize  = TAMQPLongLongUInt
+const TAMQPClassId          = UInt16
+const TAMQPMethodId         = UInt16
+const TAMQPContentClass     = TAMQPClassId
 
 immutable TAMQPFrameProperties
     channel::TAMQPChannel

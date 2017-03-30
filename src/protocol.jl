@@ -45,7 +45,8 @@ write{T<:Union{TAMQPShortStr,TAMQPLongStr}}(io::IO, s::T) = write(io, hton(s.len
 function read(io::IO, ::Type{TAMQPFieldValue})
     c = read(io, Char)
     v = read(io, FieldValueIndicatorMap[c])
-    TAMQPFieldValue(c, v)
+    T = FieldValueIndicatorMap[c]
+    TAMQPFieldValue{T}(c, v)
 end
 
 write(io::IO, fv::TAMQPFieldValue) = write(io, fv.typ, fv.fld)
@@ -157,9 +158,9 @@ const CONN_STATE_CLOSED = 0
 const CONN_STATE_OPENING = 1
 const CONN_STATE_OPEN = 2
 const CONN_STATE_CLOSING = 3
-const CONN_MAX_QUEUED = typemax(Int)
+const CONN_MAX_QUEUED = 1024 #typemax(Int)
 
-abstract AbstractChannel
+@compat abstract type AbstractChannel end
 
 type Connection
     virtualhost::String
